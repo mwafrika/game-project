@@ -9,7 +9,7 @@ import { PublisherService } from './publisher.service';
         type: Publisher,
     },
     routes: {
-        exclude: ['replaceOneBase','createOneBase','deleteOneBase','updateOneBase','getOneBase','getManyBase'],
+        exclude: ['replaceOneBase','deleteOneBase','updateOneBase','getManyBase'],
     },
 }
 )
