@@ -1,59 +1,75 @@
 import React from 'react';
 import './style.css';
-const AddGameItemForm = (props) => {
+const AddGameItemForm = ({
+  addVideoGameItem,
+  title,
+  videogame,
+  handleInputChange,
+  price,
+  releaseDate,
+  tags,
+  publisherId,
+}) => {
   return (
     <div className="form">
-      <form onSubmit={props.addVideoGameItem}>
+      <form onSubmit={addVideoGameItem}>
         <div>
-          <div class='row'>
-            <div class='form-group col-lg-12'>
+          <div className="row">
+            <div className="form-group col-lg-12">
               <label>Game title</label>
               <input
-                type='text'
-                class='form-control'
-                name='videogame'
-                value={props.videogame}
-                onChange={props.handleInputChange}
+                type="text"
+                className="form-control"
+                name="title"
+                value={title}
+                onChange={handleInputChange}
               />
             </div>
           </div>
-          <div class='row'>
-            <div class='form-group col-lg-12'>
+          <div className="row">
+            <div className="form-group col-lg-12">
               <label>Game price</label>
               <input
-                type='number'
-                class='form-control'
-                name='cost'
-                value={props.cost}
-                onChange={props.handleInputChange}
+                type="number"
+                className="form-control"
+                name="price"
+                value={price}
+                onChange={handleInputChange}
               />
             </div>
           </div>
-          <div class='row'>
-            <div class='form-group col-lg-12'>
+          <div className="row">
+            <div className="form-group col-lg-12">
               <label>Tags </label>
               <input
-                type='text'
-                class='form-control'
-                name='tag'
-                value={props.cost}
-                onChange={props.handleInputChange}
+                type="text"
+                className="form-control"
+                name="tags"
+                value={tags}
+                onChange={handleInputChange}
               />
             </div>
           </div>
-          <div class='row'>
-            <div class='form-group col-lg-12'>
+          <div className="row">
+            <div className="form-group col-lg-12">
               <label>Date </label>
               <input
-                type='date'
-                class='form-control'
-                name='date'
-                value={props.cost}
-                onChange={props.handleInputChange}
+                type="date"
+                className="form-control"
+                name="releaseDate"
+                value={releaseDate}
+                onChange={handleInputChange}
               />
             </div>
           </div>
-          <button class='btn btn-primary'> Add game item </button>
+          <input
+            type="hidden"
+            className="btn btn-primary"
+            value={publisherId}
+            name="publisherId"
+          />
+
+          <button className="btn btn-primary"> Add game item </button>
         </div>
       </form>
     </div>
