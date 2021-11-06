@@ -18,7 +18,7 @@ const App = () => {
 
   const [videoGameItems, setVideoGameItems] = useState([]);
   //const url = 'https://game-project-test1.herokuapp.com/game';
-  const url = 'http://localhost:3000/game';
+  const url = 'https://game-project-test1.herokuapp.com/game';
 
   const handleInputChange = (evt) => {
     const value = evt.target.value;
