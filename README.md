@@ -17,8 +17,8 @@
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
 ## API DOCUMENTATION ON HEROKU
-```bash
-$ [Documentation](https://game-project-test1.herokuapp.com)
+```
+[Documentation](https://game-project-test1.herokuapp.com)
 ```
 ## Installation
 
