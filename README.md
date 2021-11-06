@@ -20,6 +20,10 @@
 
 [Documentation](https://game-project-test1.herokuapp.com)
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/9f8a9edb-18f2-4ef4-9152-d40d6a731ca3/deploy-status)](https://app.netlify.com/sites/game-test-project/deploys)
+
+[Live Link](https://game-test-project.netlify.app)
+
 ## Installation
 
 ```bash
