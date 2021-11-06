@@ -1,133 +1,177 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import VideoGameItemList from './components/GameItemList';
 import AddVideoGameItemForm from './components/AddGameItemForm';
 import EditVideoGameItemForm from './components/EditGameItemForm';
+import axios from 'axios';
 
-class App extends Component {
+const App = () => {
+  const [state, setState] = useState({
+    id: null,
+    publisherId: 1,
+    tags: '',
+    price: '',
+    title: '',
+    releaseDate: new Date().toISOString().substr(0, 10),
+    status: false,
+    editing: false,
+  });
 
-  constructor() {
-    super();
-    this.state = {
-      id: null,
-      userId: 1,
-      videogame: '',
-      cost: '',
-      status: false,
-      videogameItem: {},
-      videogameItems: [],
-      editing: false
-    };
+  const [videoGameItems, setVideoGameItems] = useState([]);
+  //const url = 'https://game-project-test1.herokuapp.com/game';
+  const url = 'http://localhost:3000/game';
 
-    this.handleInputChange = this.handleInputChange.bind(this);
-    this.deleteVideoGameItem = this.deleteVideoGameItem.bind(this);
-    this.boughtVideoGameItem = this.boughtVideoGameItem.bind(this);
-    this.addVideoGameItem = this.addVideoGameItem.bind(this);
-    this.editVideoGameItem = this.editVideoGameItem.bind(this);
-    this.setEditing = this.setEditing.bind(this);
-    this.updateVideoGameItem = this.updateVideoGameItem.bind(this);
-  }
-
-  handleInputChange(event) {
-    event.preventDefault();
-    const target = event.target;
-    const value = target.value;
-    const name = target.name;
- 
-    this.setState({
-      [name]:value
-    })
-  }
-
-  addVideoGameItem(event){
-    event.preventDefault()
-    if (!this.state.videogame) return;
-    const videogameItem = {
-      id: this.state.videogameItems.length + 1,
-      videogame: this.state.videogame,
-      cost: this.state.cost,
-      userId: this.state.userId,
-      status: this.state.status
-    };
-
-    this.setState({
-      videogame: '',
-      cost: '',
-      videogameItem: videogameItem,
-      videogameItems: [...this.state.videogameItems, videogameItem]
-    })
-  }
-  deleteVideoGameItem(id) {
-    const videogameItems = this.state.videogameItems.filter( item => item.id !== id );
-    this.setState({videogameItems: videogameItems});
-  }
-
-  boughtVideoGameItem(currentVideoGame) {
-    const updatedCurrentVideoGame = Object.assign({}, currentVideoGame, { status: true });
-    const videogameItems = this.state.videogameItems.map((videogameItem, index) => (videogameItem.id === currentVideoGame.id ? updatedCurrentVideoGame : videogameItem));
-    this.setState({videogameItems: videogameItems})
-  }
-
-  editVideoGameItem(videogameItem) {
-    this.setEditing(true);
-    this.setState({
-      videogame:videogameItem.videogame,
-      cost:videogameItem.cost,
-      videogameItem: videogameItem
+  const handleInputChange = (evt) => {
+    const value = evt.target.value;
+    setState({
+      ...state,
+      [evt.target.name]: value,
     });
-  }
-  
-  setEditing(value) {
-    if(typeof value !== 'boolean') { throw " This value must either be true or false"}
-    this.setState({
-      editing: value
-    })
-  }
+  };
 
-  updateVideoGameItem(event) {
+  const setEditing = (value) => {
+    if (typeof value !== 'boolean') {
+      throw ' This value must either be true or false';
+    }
+    setState({
+      editing: value,
+    });
+  };
+  const addVideoGameItem = (event) => {
     event.preventDefault();
-    const updatedVideoGame = this.state.videogame;
-    const updatedCost = this.state.cost;
-    const updatedVideoGameItem = Object.assign({}, this.state.videogameItem, { videogame: updatedVideoGame, cost: updatedCost })
-    const videogameItems = this.state.videogameItems.map((videogameItem) => (videogameItem.id === this.state.videogameItem.id ? updatedVideoGameItem : videogameItem));
-    this.setState({ videogame:'', cost: '', videogameItems: videogameItems});
-    this.setState({ editing: false});
-  }
+    axios
+      .post(url, {
+        publisherId: state.publisherId,
+        tags: state.tags,
+        price: state.price,
+        title: state.title,
+        status: state.status,
+        releaseDate: state.releaseDate,
+      })
+      .then((res) => {
+        console.log('Mwafrika', res);
+        console.log(res.data);
+        setState(res.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const deleteVideoGameItem = (id) => {
+    axios
+      .delete(url + '/' + id)
+      .then((res) => {
+        console.log(res);
+        console.log(res.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const editVideoGameItem = (id) => {
+    axios
+      .get(`${url}/${id}`)
+      .then((res) => {
+        console.log(res);
+        console.log(res.data);
+        setState({
+          ...state,
+          title: res.data.title,
+          publisherId: res.data.publisherId,
+          price: res.data.price,
+          status: res.data.status,
+          tags: res.data.tags,
+          releaseDate: res.data.releaseDate,
+          editing: true,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const updateVideoGameItem = () => {
+    // const videogameItem = state.videogameItems.find(item => item.id === state.id);
+    axios
+      .put(`${url}/${state.id}`, {
+        title: state.title,
+        publisherId: state.publisherId,
+        price: state.price,
+        status: state.status,
+        releaseDate: state.releaseDate,
+      })
+      .then((res) => {
+        console.log(res);
+        console.log(res.data);
+        setState({
+          ...state,
+          editing: false,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
+  const getAll = () => {
+    axios
+      .get(url)
+      .then((res) => {
+        setVideoGameItems(res.data);
+        console.log(videoGameItems);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  useEffect(() => {
+    getAll();
+  }, [videoGameItems]);
 
-render() {
-  const { cost, videogame, videogameItems, editing } = this.state;
-    return (
-      <div className="App">
-        <div>
-          <VideoGameItemList 
-            videogameItems= {videogameItems} 
-            deleteVideoGameItem={this.deleteVideoGameItem}
-            boughtVideoGameItem={this.boughtVideoGameItem}
-            editVideoGameItem={this.editVideoGameItem}
-          />
-        </div>
-        <div>
-        { 
-          editing  ? (
-          <EditVideoGameItemForm 
-           videogame={this.state.videogame}
-           cost={this.state.cost} 
-           handleInputChange={this.handleInputChange}
-           setEditing={this.setEditing}
-           updateVideoGameItem={this.updateVideoGameItem}
-          />
-          ) : (
-          <AddVideoGameItemForm 
-            videogame={this.state.videogame}
-            cost={this.state.cost} 
-            handleInputChange={this.handleInputChange} 
-            addVideoGameItem={this.addVideoGameItem}
-          />
-          )
-        }
-        </div>
-      </div>
+  const boughtVideoGameItem = (currentVideoGame) => {
+    const updatedCurrentVideoGame = Object.assign({}, currentVideoGame, {
+      status: true,
+    });
+    const videogameItems = state.videogameItems.map((videogameItem, index) =>
+      videogameItem.id === currentVideoGame.id
+        ? updatedCurrentVideoGame
+        : videogameItem,
     );
-  }
-}
+    setState({ videogameItems: videogameItems });
+  };
+
+  return (
+    <div className="App">
+      <div>
+        <VideoGameItemList
+          videogameItems={videoGameItems}
+          deleteVideoGameItem={deleteVideoGameItem}
+          boughtVideoGameItem={boughtVideoGameItem}
+          editVideoGameItem={editVideoGameItem}
+        />
+      </div>
+      <div>
+        {state.editing ? (
+          <EditVideoGameItemForm
+            title={state.title}
+            price={state.price}
+            releaseDate={state.releaseDate}
+            handleInputChange={handleInputChange}
+            setEditing={setEditing}
+            updateVideoGameItem={updateVideoGameItem}
+          />
+        ) : (
+          <AddVideoGameItemForm
+            title={state.title}
+            releaseDate={state.releaseDate}
+            price={state.price}
+            tags={state.tags}
+            publisherId={state.publisherId}
+            handleInputChange={handleInputChange}
+            addVideoGameItem={addVideoGameItem}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
 export default App;
